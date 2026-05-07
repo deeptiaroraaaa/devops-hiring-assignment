@@ -1,9 +1,9 @@
 terraform {
-  required_version = ">= 2.0.0"
+  required_version = ">= 1.0.0"
   required_providers {
     null = {
       source  = "hashicorp/null"
-      version = "~> 4.0"
+      version = "~> 3.0"
     }
   }
 }
@@ -33,13 +33,13 @@ resource "null_resource" "kind_cluster" {
 
   triggers = {
     cluster_name = var.cluster_name
-    kind_config  = sha256(file("${path.module}/../kubernetes/cluster-config.yaml"))
+    kind_config  = sha256(file("${path.module}/../kubernetes/kind-config.yaml"))
   }
 
   provisioner "local-exec" {
     command = <<-EOT
       kind delete cluster --name ${var.cluster_name} 2>/dev/null || true
-      kind create cluster --name ${var.cluster_name} --config ${var.kube_config_path}
+      kind create cluster --name ${var.cluster_name} --config ../kubernetes/kind-config.yaml
       kubectl config use-context kind-${var.cluster_name}
     EOT
   }
